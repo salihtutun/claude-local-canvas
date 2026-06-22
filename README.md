@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="logo.png" width="650" alt="Canvas Local Canvas Logo">
+  <img src="logo.png" width="650" alt="Claude Local Canvas Logo">
 </p>
 
-<h1 align="center">🎨 Canvas Local Canvas</h1>
+<h1 align="center">🎨 Claude Local Canvas</h1>
 
 <p align="center">
   <strong>Bring Artifacts-style live previews and real-time debugging to Claude Desktop.</strong>
@@ -11,13 +11,13 @@
 <p align="center">
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Supported-blue.svg" alt="Model Context Protocol"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://github.com/salihtutun/canvas-local-canvas/stargazers"><img src="https://img.shields.io/github/stars/salihtutun/canvas-local-canvas.svg" alt="GitHub Stars"></a>
-  <a href="https://github.com/salihtutun/canvas-local-canvas/issues"><img src="https://img.shields.io/github/issues/salihtutun/canvas-local-canvas.svg" alt="GitHub Issues"></a>
+  <a href="https://github.com/salihtutun/claude-local-canvas/stargazers"><img src="https://img.shields.io/github/stars/salihtutun/claude-local-canvas.svg" alt="GitHub Stars"></a>
+  <a href="https://github.com/salihtutun/claude-local-canvas/issues"><img src="https://img.shields.io/github/issues/salihtutun/claude-local-canvas.svg" alt="GitHub Issues"></a>
 </p>
 
 ---
 
-`canvas-local-canvas` is a Model Context Protocol (MCP) server that empowers Claude Desktop with a local preview sandbox, a background static web server, and an automated headless browser (powered by Puppeteer). 
+`claude-local-canvas` is a Model Context Protocol (MCP) server that empowers Claude Desktop with a local preview sandbox, a background static web server, and an automated headless browser (powered by Puppeteer). 
 
 When you ask Claude to design or build web interfaces, it writes the code directly to a local workspace, boots up a dev server, launches Chromium, and **streams screenshots of the rendered page back inline to your chat**. Even better, it listens to runtime JavaScript errors and resource failures, feeding them back to Claude so it can **self-correct and debug** its work in real-time.
 
@@ -42,8 +42,8 @@ Set up your local canvas in less than 3 minutes.
 Ensure you have [Node.js](https://nodejs.org/) (v18+) installed. Clone and build the project:
 
 ```bash
-git clone https://github.com/salihtutun/canvas-local-canvas.git
-cd canvas-local-canvas
+git clone https://github.com/salihtutun/claude-local-canvas.git
+cd claude-local-canvas
 npm install
 npm run build
 ```
@@ -58,10 +58,10 @@ Add the server entry to your configuration:
 ```json
 {
   "mcpServers": {
-    "canvas-local-canvas": {
+    "claude-local-canvas": {
       "command": "node",
       "args": [
-        "/absolute/path/to/canvas-local-canvas/dist/index.js"
+        "/absolute/path/to/claude-local-canvas/dist/index.js"
       ]
     }
   }
@@ -95,7 +95,7 @@ Once installed, Claude will utilize the following tools dynamically when prompte
 Start a chat with Claude Desktop and run:
 
 *   **Create a beautiful game:**
-    > *"Create an interactive, premium-designed Tic-Tac-Toe game with neon styling, score tracking, win animations, sound effects, and smooth transitions using the Canvas Local Canvas tools."*
+    > *"Create an interactive, premium-designed Tic-Tac-Toe game with neon styling, score tracking, win animations, sound effects, and smooth transitions using the Claude Local Canvas tools."*
 *   **Generate and check responsive layout:**
     > *"Build a modern grid dashboard for financial metrics with a dark mode toggle. Open the viewport at 375px width (mobile) to verify that the mobile layout displays perfectly."*
 *   **Test and debug user flows:**
