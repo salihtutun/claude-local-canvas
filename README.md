@@ -2,7 +2,7 @@
   <img src="logo.png" width="650" alt="Claude Local Canvas Logo">
 </p>
 
-<h1 align="center">🎨 Claude Local Canvas</h1>
+<h1 align="center">🎨 CLC: Claude Local Canvas</h1>
 
 <p align="center">
   <strong>Bring Artifacts-style live previews and real-time debugging to Claude Desktop.</strong>
@@ -17,7 +17,7 @@
 
 ---
 
-`claude-local-canvas` is a Model Context Protocol (MCP) server that empowers Claude Desktop with a local preview sandbox, a background static web server, and an automated headless browser (powered by Puppeteer). 
+`claude-local-canvas` (**CLC**) is a Model Context Protocol (MCP) server that empowers Claude Desktop with a local preview sandbox, a background static web server, and an automated headless browser (powered by Puppeteer). 
 
 When you ask Claude to design or build web interfaces, it writes the code directly to a local workspace, boots up a dev server, launches Chromium, and **streams screenshots of the rendered page back inline to your chat**. Even better, it listens to runtime JavaScript errors and resource failures, feeding them back to Claude so it can **self-correct and debug** its work in real-time.
 
