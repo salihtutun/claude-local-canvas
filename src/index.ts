@@ -303,8 +303,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'canvas_stop_server': {
-        await stopSandboxServer();
         await closeBrowser();
+        await stopSandboxServer();
         return {
           content: [{
             type: 'text',

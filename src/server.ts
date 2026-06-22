@@ -116,7 +116,7 @@ export async function startSandboxServer(port: number = 3000): Promise<{ port: n
     server.on('error', (err: any) => {
       if (err.code === 'EADDRINUSE') {
         // Port is in use, try the next one
-        console.warn(`Port ${port} is in use, trying ${port + 1}...`);
+        console.error(`Port ${port} is in use, trying ${port + 1}...`);
         startSandboxServer(port + 1).then(resolve).catch(reject);
       } else {
         reject(err);
@@ -127,7 +127,7 @@ export async function startSandboxServer(port: number = 3000): Promise<{ port: n
       activeServer = server;
       activePort = port;
       const url = `http://localhost:${port}`;
-      console.log(`Sandbox server running at ${url}`);
+      console.error(`Sandbox server running at ${url}`);
       resolve({ port, url });
     });
   });
@@ -143,7 +143,7 @@ export async function stopSandboxServer(): Promise<void> {
     activeServer!.close(() => {
       activeServer = null;
       activePort = null;
-      console.log('Sandbox server stopped');
+      console.error('Sandbox server stopped');
       resolve();
     });
   });
