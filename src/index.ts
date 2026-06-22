@@ -21,12 +21,14 @@ import {
 import {
   navigateTo,
   captureScreenshot,
+  captureAnnotatedScreenshot,
   setViewport,
   interactWithPage,
   getConsoleLogs,
   closeBrowser,
   getPage
 } from './browser.js';
+import { runSetup } from './setup.js';
 
 // Setup MCP server instance
 const server = new Server(
@@ -115,6 +117,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             height: {
               type: 'number',
               description: 'Optional viewport height in pixels. Defaults to 768.'
+            },
+            annotate: {
+              type: 'boolean',
+              description: 'Optional. If true, draws numbered badge annotations on all interactive elements in the screenshot, and returns a key-value list mapping numbers to element selectors.'
             }
           }
         }
@@ -132,7 +138,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             selector: {
               type: 'string',
-              description: 'CSS selector of the target element (e.g., "button#submit", "input[name=\'email\']", ".toggle-btn").'
+              description: 'CSS selector of the target element (e.g., "button#submit", "input[name=\'email\']", ".toggle-btn") or the badge number from the last annotated screenshot (e.g. "1").'
             },
             value: {
               type: 'string',
@@ -242,7 +248,24 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const activeUrl = browserPage.url();
 
         // Capture screenshot and console logs
-        const screenshot = await captureScreenshot();
+        const shouldAnnotate = args?.annotate === true;
+        let screenshot: string;
+        let elementsMappingStr = '';
+
+        if (shouldAnnotate) {
+          const res = await captureAnnotatedScreenshot();
+          screenshot = res.screenshot;
+          if (res.elements.length > 0) {
+            elementsMappingStr = '\n\n--- Detected Interactive Elements ---\n' + 
+              res.elements.map(e => `[${e.index}] ${e.selector} (${e.description})`).join('\n') +
+              '\n---------------------------------------';
+          } else {
+            elementsMappingStr = '\n\nNo visible interactive elements detected on the page.';
+          }
+        } else {
+          screenshot = await captureScreenshot();
+        }
+
         const logs = getConsoleLogs();
         
         let logsSummary = 'No console logs captured.';
@@ -254,7 +277,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           content: [
             {
               type: 'text',
-              text: `Page loaded: "${title}"\nURL: ${activeUrl}\n\n--- Console Logs ---\n${logsSummary}\n--------------------`
+              text: `Page loaded: "${title}"\nURL: ${activeUrl}${elementsMappingStr}\n\n--- Console Logs ---\n${logsSummary}\n--------------------`
             },
             {
               type: 'image',
@@ -329,6 +352,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 // Start the server transport
 async function run() {
+  if (process.argv.includes('--setup')) {
+    await runSetup();
+    return;
+  }
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error('Claude Local Canvas MCP Server running on stdio');

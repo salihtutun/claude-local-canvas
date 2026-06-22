@@ -49,6 +49,15 @@ npm run build
 ```
 
 ### 2. Connect to Claude Desktop
+
+#### Option A: Automatic Setup (Recommended)
+Simply run the setup command:
+```bash
+node dist/index.js --setup
+```
+This tool will automatically locate your Claude Desktop config file, inject the `claude-local-canvas` block with the correct paths, and back up your previous configuration.
+
+#### Option B: Manual Setup
 Open your Claude Desktop configuration file:
 *   **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 *   **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
@@ -107,6 +116,7 @@ You can customize the behavior of the server by adding the `env` block in your `
 ```
 
 * **`CANVAS_SANDBOX_DIR`**: Overrides the default workspace directory (`./sandbox`) with an absolute path on your host machine. Great for directing Claude to write files straight into your active code folders.
+* **`DISABLE_CHROME_SANDBOX`**: Set to `"true"` to disable Chromium's security sandbox (equivalent to passing `--no-sandbox` to Puppeteer). Use this only if running in root-user Docker containers, headless environments, or CI setups where the Chrome sandbox cannot be run.
 
 ---
 
@@ -120,8 +130,8 @@ Once installed, Claude will utilize the following tools dynamically when prompte
 | `canvas_read_file` | `path` (str) | Reads and returns the content of a file from the workspace. |
 | `canvas_list_files` | (none) | Recursively lists all file trees and sizes inside the sandbox. |
 | `canvas_start_server` | `port` (number, optional) | Starts the background web server on an available port. |
-| `canvas_view_page` | `url` (optional), `width`, `height` | Loads the page in Chromium and returns base64 inline PNG + console outputs. |
-| `canvas_interact` | `action` (enum), `selector`, `value` | Interacts with elements (`click`, `type`, `scroll`, `hover`) and gets the new UI state. |
+| `canvas_view_page` | `url` (optional), `width`, `height`, `annotate` (optional bool) | Loads the page in Chromium and returns base64 inline PNG + console outputs. If `annotate` is true, overlays numbered badges on interactive elements. |
+| `canvas_interact` | `action` (enum), `selector` (CSS or badge ID), `value` | Interacts with elements (click, type, scroll, hover) by CSS selector or badge number (e.g. `"1"`) and returns the new UI state. |
 | `canvas_stop_server` | (none) | Shuts down the background web server and closes active browser pages. |
 
 ---
@@ -136,6 +146,32 @@ Start a chat with Claude Desktop and run:
     > *"Build a modern grid dashboard for financial metrics with a dark mode toggle. Open the viewport at 375px width (mobile) to verify that the mobile layout displays perfectly."*
 *   **Test and debug user flows:**
     > *"Open the current page, type 'admin@canvas.local' in the email box, type 'password123' in the password box, click the submit button, and let me see what happens."*
+
+---
+
+## 🔒 Security & Sandbox Isolation
+
+To protect your host machine, CLC executes with hard security boundaries:
+
+*   **Local Network Protection**: The static HTTP server binds strictly to the loopback interface (`127.0.0.1`). Devices on your local network (e.g. Wi-Fi, Ethernet) cannot access your sandbox files.
+*   **Path Traversal Prevention**: The path resolver blocks any read/write operations attempting to escape the sandbox directory (e.g. by using `../` segments). Attempting to escape results in an immediate access error.
+*   **Browser Sandboxing**: By default, the Chromium browser runs with full OS-level sandboxing. This shields your host system if the browser is directed to navigate to external/untrusted web pages.
+
+---
+
+## 🛠️ Troubleshooting & FAQ
+
+### 1. Chrome/Puppeteer fails to start or gives "No Usable Sandbox" errors (Linux/Docker)
+If you are running the MCP server inside a Docker container, headless server, or CI pipeline as the `root` user, Chromium may refuse to start because the OS-level sandbox is disabled.
+*   **Solution**: Set the environment variable `DISABLE_CHROME_SANDBOX=true` in your Claude Desktop configuration file or system env. This is equivalent to passing `--no-sandbox` to Puppeteer. Only use this in isolated, trusted execution environments.
+
+### 2. "EADDRINUSE" Port Conflicts
+If port `3000` is already in use by another application on your computer, you do not need to do anything. The static server automatically detects the conflict, prints a message, and tries port `3001`, `3002`, etc., until it finds an open port.
+
+### 3. Setup CLI fails to write configuration
+If you run `node dist/index.js --setup` and receive a permission error:
+*   Ensure that Claude Desktop is not running.
+*   On macOS, ensure your terminal or IDE has permissions to access the directory `~/Library/Application Support/Claude`.
 
 ---
 

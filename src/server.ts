@@ -123,7 +123,7 @@ export async function startSandboxServer(port: number = 3000): Promise<{ port: n
       }
     });
 
-    server.listen(port, () => {
+    server.listen(port, '127.0.0.1', () => {
       activeServer = server;
       activePort = port;
       const url = `http://localhost:${port}`;
