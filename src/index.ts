@@ -31,7 +31,7 @@ import {
 // Setup MCP server instance
 const server = new Server(
   {
-    name: 'claude-local-canvas',
+    name: 'canvas-local-canvas',
     version: '1.0.0',
   },
   {
