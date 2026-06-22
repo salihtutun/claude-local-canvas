@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build files
+dist/
+tsup.config.ts.timestamp-*
+
+# Local test sandbox
+sandbox/
+
+# Log files
+*.log
+npm-debug.log*
+
+# System files
+.DS_Store
+Thumbs.db
