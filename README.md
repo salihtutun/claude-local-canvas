@@ -74,6 +74,42 @@ Fully restart the Claude Desktop application (Cmd+Q on macOS or close from tray)
 
 ---
 
+## 📖 Detailed Usage Guide
+
+Once installed, you don't need to manually invoke tools. Claude is smart enough to use them automatically when you ask it to design, build, or preview layouts.
+
+### Typical Workflow Flow
+1. **Design Request**: You ask Claude to build a web component or single-page app (e.g., a modern Pomodoro timer).
+2. **File Writing**: Claude automatically writes `index.html`, styles, and script files directly to your sandbox directory using `canvas_write_file`.
+3. **Booting Server**: Claude starts the background static server using `canvas_start_server` to host your sandbox assets.
+4. **Rendering & Screenshotting**: Claude launches the headless browser, navigates to the sandbox URL, captures a screenshot, and displays the image **inline inside your chat window** along with any browser console logs using `canvas_view_page`.
+5. **Self-Correction (The Magic)**: If there are resource load failures or uncaught JavaScript exceptions, the console logger returns them to Claude. Claude reads the stack traces, modifies the files, and recaptures a screenshot until the code runs bug-free.
+
+### Simulating User Actions
+You can prompt Claude to interact with your app. For example:
+* *"Click the dark mode button and show me what it looks like."*
+* *"Enter 'Work Session' in the description input, select '30 minutes' from the dropdown, and click start."*
+
+Claude will locate the target element, call `canvas_interact` to perform the action, and return a new screenshot showing the updated state of the page.
+
+### ⚙️ Custom Configurations (Environment Variables)
+
+You can customize the behavior of the server by adding the `env` block in your `claude_desktop_config.json`:
+
+```json
+"canvas-local-canvas": {
+  "command": "node",
+  "args": ["/absolute/path/to/claude-local-canvas/dist/index.js"],
+  "env": {
+    "CANVAS_SANDBOX_DIR": "/Users/salihtutun/custom-canvas-projects"
+  }
+}
+```
+
+* **`CANVAS_SANDBOX_DIR`**: Overrides the default workspace directory (`./sandbox`) with an absolute path on your host machine. Great for directing Claude to write files straight into your active code folders.
+
+---
+
 ## 🛠️ Available MCP Tools
 
 Once installed, Claude will utilize the following tools dynamically when prompted:
